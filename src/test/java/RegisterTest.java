@@ -12,7 +12,8 @@ import utils.User;
 import utils.UserClient;
 import utils.UserGenerator;
 
-import static config.Constants.*;
+import static config.Constants.LOGIN_PAGE_URL;
+import static config.Constants.REGISTER_PAGE_URL;
 import static org.junit.Assert.assertEquals;
 
 public class RegisterTest extends BaseTest {
@@ -22,16 +23,18 @@ public class RegisterTest extends BaseTest {
     private String userEmail;
     private String userPassword;
     private RegisterPage registerPage;
+    boolean userCreationFlag = true;
+
     @Before
     @Step("Подготовка тестовых данных")
-    public void init(){
+    public void init() {
         user = UserGenerator.getRandomUser();
-        userName = user.getName();
-        userEmail = user.getEmail();
-        userPassword = user.getPassword();
         driver.get(REGISTER_PAGE_URL);
         registerPage = new RegisterPage(driver);
 
+        userName = user.getName();
+        userEmail = user.getEmail();
+        userPassword = user.getPassword();
         Allure.addAttachment("Имя", userName);
         Allure.addAttachment("Email", userEmail);
         Allure.addAttachment("Пароль", userPassword);
@@ -40,29 +43,42 @@ public class RegisterTest extends BaseTest {
     @Test
     @DisplayName("Тест успешной регистарции пользователя")
     public void registerNewUserSuccess() {
-        //Ожидаем загрузки страницы
-        registerPage.waitRegisterPage();
-        //Заполняем поля для регистрации
-        registerPage.setUserEmail(userEmail);
-        registerPage.setUserName(userName);
-        registerPage.setUserPassword(userPassword);
-        //Кликаем кнопку регистрации
-        LoginPage loginPage = registerPage.clickRegisterButton();
+        //Заполняем поля и кликаем кнопку регистрации
+        LoginPage loginPage = registerPage.fillRegistrationForm(user);
         //Ожидаем загрузки страницы входа
         loginPage.waitLoginPage();
         //Проверяем, что произошел переход на страницу входа
         checkRegistrationFormLoaded();
     }
+
     @Step("Проверка успешного перехода на форму входа")
     private void checkRegistrationFormLoaded() {
         assertEquals("Не произошел переход на форму входа",
-                driver.getCurrentUrl(),
-                LOGIN_PAGE_URL);
+                LOGIN_PAGE_URL,
+                driver.getCurrentUrl());
     }
+
+    @Test
+    @DisplayName("Проверка регистрации с коротким паролем. Минимальная длинна пароля 6 символов")
+    public void registerNewUserWithShortPasswordFail() {
+        String expectedMessage = "Некорректный пароль";
+        String shortPassword = UserGenerator.getRandomPassword(0, 5);
+        registerPage.setUserName(userName);
+        registerPage.setUserEmail(userEmail);
+        registerPage.setUserPassword(shortPassword);
+        userCreationFlag = false;
+        String actualMessage = registerPage.getIncorrectPasswordMessageText();
+        assertEquals("Не прошла провекра сообщения об ошибке при коротком пароле",
+                expectedMessage,
+                actualMessage);
+    }
+
     @After
     @Step("Удаление тестовго пользователя через API")
     public void deleteTestUser() {
-        Response response = userClient.deleteUser(user);
-        assertEquals("Ошибка при удалении пользователя", HttpStatus.SC_ACCEPTED, response.getStatusCode());
+        if (userCreationFlag) {
+            Response response = userClient.deleteUser(user);
+            assertEquals("Ошибка при удалении пользователя", HttpStatus.SC_ACCEPTED, response.getStatusCode());
+        }
     }
 }

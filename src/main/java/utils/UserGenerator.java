@@ -1,6 +1,7 @@
 package utils;
 
 import com.github.javafaker.Faker;
+
 import java.util.Locale;
 
 public class UserGenerator {
@@ -15,7 +16,7 @@ public class UserGenerator {
     }
 
     public static String getRandomPassword() {
-        return fakerEn.internet().password();
+        return fakerEn.internet().password(6, 16);
     }
 
     public static String getRandomEmail() {
@@ -23,6 +24,10 @@ public class UserGenerator {
     }
 
     public static String getRandomName() {
-        return fakerRu.name().username();
+        return fakerRu.name().username() + fakerRu.name().firstName();
+    }
+
+    public static String getRandomPassword(int minimumLength, int maximuLength) {
+        return fakerEn.internet().password(minimumLength, maximuLength);
     }
 }

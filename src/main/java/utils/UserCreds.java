@@ -3,9 +3,11 @@ package utils;
 public class UserCreds {
     private String email;
     private String password;
-    public UserCreds(){
+
+    public UserCreds() {
 
     }
+
     public UserCreds(String email, String password) {
         this.email = email;
         this.password = password;
