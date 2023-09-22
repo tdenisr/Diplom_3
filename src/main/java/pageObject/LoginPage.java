@@ -51,6 +51,14 @@ public class LoginPage {
         return clickEnterButton();
     }
 
+    @Step("Проверка страницы логина")
+    public boolean isLoginPage() {
+        waitLoginPage();
+        return driver.findElement(userEmailField).isDisplayed() &&
+                driver.findElement(userPasswordField).isDisplayed() &&
+                driver.findElement(enterButton).isDisplayed();
+    }
+
     private void putText(WebElement element, String text) {
         element.clear();
         element.sendKeys(text);

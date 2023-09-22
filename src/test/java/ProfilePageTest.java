@@ -6,13 +6,17 @@ import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pageObject.*;
+import pageObject.BasePage;
+import pageObject.LoginPage;
+import pageObject.MainPage;
+import pageObject.ProfilePage;
 import utils.User;
 import utils.UserClient;
 import utils.UserCreds;
 import utils.UserGenerator;
 
-import static config.Constants.*;
+import static config.Constants.MAIN_PAGE_URL;
+import static config.Constants.PROFILE_PAGE_URL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

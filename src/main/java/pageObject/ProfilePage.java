@@ -19,8 +19,10 @@ public class ProfilePage {
     private final By emailField = By.xpath(".//input[contains(@name, 'name') and contains(@type, 'text')]");
     private final By passwordField = By.xpath(".//input[contains(@name, 'name') and contains(@type, 'password')]");
     private final By saveButton = By.xpath(".//button[text()= 'Сохранить']");
-    private final By constructorLink  = By.xpath(".//p[text()='Конструктор']/parent::a");
-    private final By logoLink = By.xpath(".//div[starts-with(@class,'AppHeader_header__logo')]/a");;
+    private final By exitButton = By.xpath(".//button[text()= 'Выход']");
+    private final By constructorLink = By.xpath(".//p[text()='Конструктор']/parent::a");
+    private final By logoLink = By.xpath(".//div[starts-with(@class,'AppHeader_header__logo')]/a");
+    ;
 
     @Step("Ожидание загрузки страницы профиля")
     public void waitProfilePage() {
@@ -45,17 +47,26 @@ public class ProfilePage {
         waitProfilePage();
         return driver.findElement(passwordField).getAttribute("value");
     }
+
     @Step("Переход по ссылке Конструктор")
-    public MainPage clickConstructorLink(){
+    public MainPage clickConstructorLink() {
         waitProfilePage();
         driver.findElement(constructorLink).click();
         return new MainPage(driver);
     }
+
     @Step("Клик по логотипу сайта")
-    public MainPage clickLogoLink(){
+    public MainPage clickLogoLink() {
         waitProfilePage();
         driver.findElement(logoLink).click();
         return new MainPage(driver);
+    }
+
+    @Step("Клик по кнопке Выход")
+    public LoginPage clickExitButton() {
+        waitProfilePage();
+        driver.findElement(exitButton).click();
+        return new LoginPage(driver);
     }
 
 }
